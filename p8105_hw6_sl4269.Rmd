@@ -14,18 +14,58 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 
 library(tidyverse)
+library(modelr)
+library(ggpubr)
 
 ```
 
 ```{r}
-read_csv("birthweight.csv") %>% 
+bdata<- read_csv("birthweight.csv") %>% 
   mutate(babysex = as.factor(babysex),
          frace = as.factor(frace),
          malform = as.factor(malform),
          mrace = as.factor(mrace),
-         parity = as.factor(parity),
          pnumlbw = as.factor(pnumlbw),
          pnumsga = as.factor(pnumlbw) 
           )
+```
+
+It would be interesting to see in a family monthly income is associated with birth weight given that may be associated with the quality of nutrition. After running the model, even though there is evidence to suggest an association between birth weight and family income the `r^2` value shows that family income only accounts for `0.2 %` of the variation in birth weight. 
+```{r}
+bwt_d_plot <- bdata %>% 
+  ggplot(aes(bwt))+geom_density()
+
+fincome_d_plot <- bdata %>% 
+  ggplot(aes(fincome))+geom_histogram()
+
+bwt_fincome_plot <-bdata %>% 
+  ggplot(aes(x = fincome, y = bwt , group = fincome))+geom_boxplot()
+
+mod_1 <- lm(bwt ~ fincome, data = bdata) 
+
+mod_1 %>%  summary()
+
+mod_1_res_pred_plot<- bdata %>% 
+                        modelr::add_predictions(mod_1) %>% 
+                        modelr::add_residuals(mod_1) %>% 
+                        ggplot(aes(x=resid,y=pred))+geom_point()
+
+ggarrange(bwt_d_plot, fincome_d_plot, bwt_fincome_plot, mod_1_res_pred_plot)
+ 
+```
+
+```{r}
+ga_d_plot<- bdata %>% 
+  ggplot(aes(gaweeks))+geom_density()
+
+bl_d_plot<-bdata %>% 
+  ggplot(aes(blength))+geom_histogram()
+
+mod_2 <- lm(bwt ~ fincome, data = bdata)
+
+mod_2_ga_d_plot <-bdata %>% 
+modelr::add_predictions(fit) %>% 
+  modelr::add_residuals(fit) %>% 
+  ggplot(aes(x=resid,y=pred))+geom_point()
 ```
 
