@@ -1,0 +1,31 @@
+---
+title: "p8105_hw6_sl4269"
+author: "Steven Lawrence"
+date: "November 25, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Problem 1
+
+```{r}
+
+library(tidyverse)
+
+```
+
+```{r}
+read_csv("birthweight.csv") %>% 
+  mutate(babysex = as.factor(babysex),
+         frace = as.factor(frace),
+         malform = as.factor(malform),
+         mrace = as.factor(mrace),
+         parity = as.factor(parity),
+         pnumlbw = as.factor(pnumlbw),
+         pnumsga = as.factor(pnumlbw) 
+          )
+```
+
